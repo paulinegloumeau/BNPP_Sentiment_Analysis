@@ -1,0 +1,6 @@
+# Stupid Stuff
+*__pycache__
+
+# Data YELP
+/data_yelp/**/*.*
+!/data_yelp/**/*.gitkeep
