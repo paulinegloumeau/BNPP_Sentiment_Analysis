@@ -1,2 +1,2 @@
-# BNPP_Sentiment_Analysis
+# Sentiment_Analysis
 Academic Project 
