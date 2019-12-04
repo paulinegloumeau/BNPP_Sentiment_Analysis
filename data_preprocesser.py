@@ -34,8 +34,9 @@ def split_raw_json_review_file(lines_per_file = 100000, max_files = 1):
         if smallfile:
             smallfile.close()  
 
-def split_raw_csv_review_file(lines_per_file = 100000, single_file = True, join_business = True):
+def split_raw_csv_review_file(lines_per_file = 100000, max_files=1 , join_business = True):
     create_file(preprocessed_data_path + 'yelp_academic_dataset_review_split/')
+    created_files = 0
     if join_business:
         business_df = pd.read_csv(raw_data_path + 'csv/yelp_business.csv')
     for i,chunk in enumerate(pd.read_csv(raw_data_path + 'csv/yelp_review.csv', chunksize=lines_per_file)):
@@ -43,7 +44,8 @@ def split_raw_csv_review_file(lines_per_file = 100000, single_file = True, join_
             chunk = pd.merge(left=chunk, right=business_df, on='business_id', how='left')
             chunk = chunk[['review_id', 'business_id', 'stars_x', 'stars_y', 'date', 'city', 'text', 'categories']]
         chunk.to_csv(preprocessed_data_path + 'yelp_academic_dataset_review_split/yelp_academic_dataset_review_{}.csv'.format((i+1)*lines_per_file), index='False')
-        if single_file:
+        created_files += 1
+        if created_files == max_files:
             break
 
 split_raw_csv_review_file()
