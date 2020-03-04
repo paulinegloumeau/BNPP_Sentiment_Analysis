@@ -23,8 +23,15 @@ preprocessed_data_path = './data_yelp/preprocessed/'
 reviews_type_path = 'categories_30000/yelp_academic_dataset_review_Auto Repair.csv'
 
 # Processing Functions
+
+def split_to_sentences(row):
+    review = row['text'] 
+    sentences = review.split(r'[.,;:]')
+    return sentences
+
+
 def identify_tokens(row):
-    review = row['text']
+    review = row['sentences']
     tokens = nltk.word_tokenize(review)
     # taken only words (not punctuation)
     # token_words = [re.sub("[^\w\s]", " ", w) for w in tokens]
