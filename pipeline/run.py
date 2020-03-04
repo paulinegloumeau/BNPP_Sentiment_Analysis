@@ -3,7 +3,7 @@ import pandas as pd
 import argparse
 from tqdm import tqdm
 
-from analyse import Sentiment
+from sa import Sentiment
 import model
 
 
