@@ -18,11 +18,7 @@ from apex.reparameterization import apply_weight_norm, remove_weight_norm
 import model
 
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set_style({'font.family': 'monospace'})
 
 def get_neuron_and_polarity(sd, neuron):
     """return a +/- 1 indicating the polarity of the specified neuron in the module"""
@@ -92,35 +88,6 @@ def process_text(text, model, input, temperature, neuron=None, mask=False, overw
 #    chrs.append(chr(ch))
     return chrs, vals
 
-def make_heatmap(text, values, save=None, polarity=1):
-    cell_height=.325
-    cell_width=.15
-    n_limit = 74
-    text = list(map(lambda x: x.replace('\n', '\\n'), text))
-    num_chars = len(text)
-    total_chars = math.ceil(num_chars/float(n_limit))*n_limit
-    mask = np.array([0]*num_chars + [1]*(total_chars-num_chars))
-    text = np.array(text+[' ']*(total_chars-num_chars))
-    values = np.array(values+[0]*(total_chars-num_chars))
-    values *= polarity
-
-    # error again
-    values = np.array([value.item() if type(value) != int else value for value in values])
-
-    values = values.reshape(-1, n_limit)
-    text = text.reshape(-1, n_limit)
-    mask = mask.reshape(-1, n_limit)
-    num_rows = len(values)
-    plt.figure(figsize=(cell_width*n_limit, cell_height*num_rows))
-    hmap=sns.heatmap(values, annot=text, mask=mask, fmt='', vmin=-1, vmax=1, cmap='RdYlGn',
-                     xticklabels=False, yticklabels=False, cbar=False)
-    plt.tight_layout()
-    if save is not None:
-        plt.savefig(save)
-    # clear plot for next graph since we returned `hmap`
-    plt.clf()
-    return hmap
-
 class Sentiment:
     def __init__(self, load_model, visualize):
         self.data_size = 256
@@ -182,8 +149,6 @@ class Sentiment:
         if self.neuron is not None:
             out = out[0]
         self.input.data.fill_(sample(out, self.temperature))
-
-        print(self.input)
         
     def process(self, text):
         outchrs = []
@@ -198,8 +163,8 @@ class Sentiment:
 
             outstr = ''.join(outchrs)
             # Get each val
-            outvals_list = [val.item() if type(val) != int else val for val in outvals]
+            outvals_list = [round(val.item() if type(val) != int else val, 3) for val in outvals]
 
             #make_heatmap(outstr, outvals, 'test')
 
-        return outvals                                                            
+        return outvals_list                                                            
