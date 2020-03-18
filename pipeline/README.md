@@ -2,7 +2,7 @@ The raw CSV file should be put in */data/raw*. This file should at least include
 - *review_id* the id of the document
 - *text* the text of the document
 
-Go to the root of the repo and run `python3 pipeline/run_tokenizer.py`. For each file in */data/raw*, this will create a file in */data/tokenized* with 2 new columns :
+Go to the root of the repo and run `python3 pipeline/run_preprocesser.py`. For each file in */data/raw*, this will create a file in */data/tokenized* with 2 new columns :
 - *tokens* all the tokenized words found in the text
 - *tokens_index* the index of each token 
 
