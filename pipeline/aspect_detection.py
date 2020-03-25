@@ -6,14 +6,24 @@ from pprint import pprint
 import gensim
 import gensim.corpora as corpora
 from gensim.utils import simple_preprocess
-from gensim.models import CoherenceModel
+from gensim.models import CoherenceModel, TfidfModel
 
 def concat_lists(lists):
     return sum(lists, [])
 
-def data_preprocessing(serie, no_below, no_above):
+def data_preprocessing(df, no_below, no_above, split_sentences=False):
+
+    if split_sentences:
+        df = df.set_index(['review_id']).apply(pd.Series.explode).reset_index()
+        df = df[~df['words_lemmatized'].isnull()]
+
+    else:
+        df['words_lemmatized'] = df['words_lemmatized'].apply(concat_lists)
+
+    texts = df['words_lemmatized']
+
     # Create dictionnary
-    id2word = corpora.Dictionary(serie)
+    id2word = corpora.Dictionary(texts)
     print('Unique words :', len(id2word))
 
     # On filter out les mots qui appraraissent dans moins de 2 textes ou dans plus de 50% des textes
@@ -22,12 +32,15 @@ def data_preprocessing(serie, no_below, no_above):
     print('Unique words after filtering out the most and least frequent ones :', len(id2word))
 
     # Create Corpus
-    texts = serie
     corpus = [id2word.doc2bow(text) for text in texts]
 
-    return texts, id2word, corpus
+    # tfidf = TfidfModel(corpus)
+    # corpus_tfidf = tfidf[corpus]
 
-def LDA(texts, corpus, id2word, num_topics):
+    return df, texts, id2word, corpus
+
+def LDA(df, texts, corpus, id2word, num_topics):
+    # Compute the LDA model
     print("Running Latent Dirichlet Allocation ...")
     lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus, 
                                                 id2word=id2word, 
@@ -37,9 +50,25 @@ def LDA(texts, corpus, id2word, num_topics):
                                                 passes=10, 
                                                 alpha='auto', 
                                                 per_word_topics=True)
+    # Compute coherence score
     coherencemodel = CoherenceModel(model=lda_model, texts=texts, dictionary=id2word, coherence='c_v')
-    print("Coherence score : " + str(coherencemodel.get_coherence()))    
-    return lda_model
+    print("Coherence score : " + str(coherencemodel.get_coherence()))   
+    # Get all the topics probabilities for each word
+    words_topics = lda_model.get_topics()
+    # Keep the highest one
+    words_best_topic = np.argmax(words_topics, axis=0)
+    words_best_topic_p = np.max(words_topics, axis=0)
+
+    df['words_topic'] = None
+    #np.empty((len(df), 0)).tolist()
+
+    # Add the list of the best topics (for each word) for each document
+    for index, row in df.iterrows():
+        words_idx = id2word.doc2idx(row['words_lemmatized'])
+        words_topic = [words_best_topic[i] if i!=-1 else -1 for i in words_idx]
+        df.at[index, 'words_topic'] = words_topic
+
+    return df
 
 
 def ret_top_model(texts, corpus, id2word):
@@ -63,29 +92,3 @@ def ret_top_model(texts, corpus, id2word):
             coherence_values[n] = cm.get_coherence()
         top_topics = sorted(coherence_values.items(), key=operator.itemgetter(1), reverse=True)
     return lm, top_topics
-
-def get_topics(lda_model, threshold):
-    all_topics = lda_model.get_document_topics()
-
-
-
-
-df = pd.read_pickle('pipeline/data/preprocessed/yelp_academic_dataset_review_Auto Repair_preprocessed.pkl')
-df['words_lemmatized'] = df['words_lemmatized'].apply(concat_lists)
-print(df)
-texts, id2word, corpus = data_preprocessing(df['words_lemmatized'], no_below=2, no_above=0.5)
-
-lda_model = LDA(texts, corpus, id2word, 5)
-print(lda_model.get_document_topics(corpus[0], per_word_topics=True))
-print(lda_model.get_document_topics(corpus[0], minimum_probability=0.2, per_word_topics=True))
-print(df.iloc[0])
-topics = lda_model.get_topics()
-
-first_topic = topics[0]
-first_topic.sort()
-print(first_topic[-10:])
-
-# lm, top_topics = ret_top_model(texts, corpus, id2word)
-# print(top_topics[:5])
-# pprint([lm.show_topic(topicid) for topicid, c_v in top_topics[:5]])
-

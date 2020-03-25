@@ -44,11 +44,14 @@ def tokenize(row):
 
 ############# Preprocessing functions used for Aspect Detection #############
 
-def split_to_sentences(row):
+def split_to_sentences(row, many_delimiters=False):
     words = row['words']
     words_index = row['words_index']
 
-    delimiters = ['?','!','.',',',';',':','\n','"','(',')']
+    delimiters = ['?','!','.']
+    if many_delimiters:
+        delimiters = ['?','!','.',',',';',':','\n','"','(',')']
+
     sentences = []
     sentences_words_index = []
 
@@ -166,11 +169,3 @@ def rejoin_words(row):
     for sentence in sentences :
         joined_words.extend(sentence)
     return joined_words
-
-# def index_words(row):
-#     sentences = row['words_meaningful']
-#     all_words = row['sentences']
-#     indexes = []
-#     for j,sentence in enumerate(sentences) :
-#         indexes.append([(w,all_words[j].index(w)) for w in sentence])
-#     return indexes
