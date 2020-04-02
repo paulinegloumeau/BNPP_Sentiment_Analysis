@@ -14,8 +14,7 @@ from nltk.probability import FreqDist
 nltk.download('averaged_perceptron_tagger')
 
 from textblob import TextBlob
-tags = ['FW','JJ','JJR','JJS','NN','NNS','NNP','NNPS','RBR','RBS','UH','VB','VBD','VBG','VBN','VBP','VBZ']
-
+tags = ['NN','NNS','NNP','NNPS']
 ############# Tokenizing functions used for Sentiment Analysis and Aspect Detection #############
 
 def spans(text):
@@ -119,21 +118,21 @@ def remove_stops(row):
     return useful_words, useful_words_index
 
 def unpolarized(row):
-    words_useful = row['words_useful']
-    words_useful_index = row['words_useful_index']
+    words_lemmatized = row['words_lemmatized']
+    words_lemmatized_index = row['words_lemmatized_index']
 
     unpolarized_words = []
     unpolarized_words_index = []
 
     # For each sentence
-    for i in range(len(words_useful)):
+    for i in range(len(words_lemmatized)):
         sentence_unpolarized = []
         sentence_unpolarized_index = []
         # For each word in this sentence
-        for j in range(len(words_useful[i])):
-            if (abs(TextBlob(words_useful[i][j]).sentiment.polarity)<0.2 and abs(TextBlob(words_useful[i][j]).sentiment.polarity<0.2)):
-                sentence_unpolarized.append(words_useful[i][j])
-                sentence_unpolarized_index.append(words_useful_index[i][j])
+        for j in range(len(words_lemmatized[i])):
+            if (abs(TextBlob(words_lemmatized[i][j]).sentiment.polarity)<0.2 and abs(TextBlob(words_lemmatized[i][j]).sentiment.polarity<0.2)):
+                sentence_unpolarized.append(words_lemmatized[i][j])
+                sentence_unpolarized_index.append(words_lemmatized_index[i][j])
         unpolarized_words.append(sentence_unpolarized)
         unpolarized_words_index.append(sentence_unpolarized_index)
     
@@ -142,22 +141,22 @@ def unpolarized(row):
 lemming = WordNetLemmatizer()
 
 def lem_list(row):
-    words_meaningful = row['words_meaningful']
-    words_meaningful_index = row['words_meaningful_index']
+    words_useful = row['words_useful']
+    words_useful_index = row['words_useful_index']
 
     lemmed_words = []
     lemmed_words_index = []
 
     # For each sentence
-    for i in range(len(words_meaningful)):
+    for i in range(len(words_useful)):
         sentence_lemmed = []
         sentence_lemmed_index = []
         # For each word in this sentence
-        for j in range(len(words_meaningful[i])):
-            word_lemmed = lemming.lemmatize(words_meaningful[i][j])
+        for j in range(len(words_useful[i])):
+            word_lemmed = lemming.lemmatize(words_useful[i][j])
             if word_lemmed != '':
                 sentence_lemmed.append(word_lemmed)
-                sentence_lemmed_index.append(words_meaningful_index[i][j])
+                sentence_lemmed_index.append(words_useful_index[i][j])
         lemmed_words.append(sentence_lemmed)
         lemmed_words_index.append(sentence_lemmed_index)
 
