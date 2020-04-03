@@ -17,6 +17,8 @@ def process(df):
 for file in glob.glob("{}*.pkl".format(constants.PREPROCESSED_DATA_PATH)):
     df = pd.read_pickle(file)
     process(df)
-    output_path = constants.PROCESSED_DATA_PATH + '_'.join((file.split('.')[-2]).split('/')[-1].split('_')[:-1]) + '_ad.pkl'
+    output_path = (
+        constants.PROCESSED_DATA_PATH + '_'.join((file.split("\\")[1]).split(".")[0].split('_')[:-1]) + "_ad.pkl"
+    )
     print(df)
     df.to_pickle(output_path)

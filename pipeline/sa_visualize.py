@@ -12,10 +12,11 @@ sns.set_style({'font.family': 'monospace'})
 
 os.chdir("./pipeline")
 
-def make_heatmap(text, tokens_values, tokens_index, save=None, polarity=1):
+def make_heatmap(text, words_values, words_index, save=None, polarity=1):
+    print(words_index, words_values)
     values = [0]*len(text)
-    for i in range(len(tokens_index)):
-        values[tokens_index[i][0]:tokens_index[i][1]] = [tokens_values[i]]*(tokens_index[i][1]-tokens_index[i][0])
+    for i in range(len(words_index)):
+        values[words_index[i][0]:words_index[i][1]] = [words_values[i]]*(words_index[i][1]-words_index[i][0])
 
     cell_height=.325
     cell_width=.15
@@ -45,12 +46,12 @@ def make_heatmap(text, tokens_values, tokens_index, save=None, polarity=1):
     plt.clf()
     return hmap
 
-n_to_plot = 10
+n_to_plot = 1
 
-df = pd.read_pickle(constants.PROCESSED_DATA_PATH + 'input_example_tokenized_sa.pkl')
-df_sample = df.sample(10)
+df = pd.read_pickle(constants.PROCESSED_DATA_PATH + 'input_example_sa.pkl')
+df_sample = df.sample(1)
 
 i = 0
 for index, row in df_sample.iterrows():
-    hmap = make_heatmap(row['text'], row['tokens_sentiment'], row['tokens_index'], './heatmap_examples/example_{}'.format(i))
+    hmap = make_heatmap(row['text'], row['words_sentiment'], row['words_index'], './heatmap_examples/example_{}'.format(i))
     i+=1

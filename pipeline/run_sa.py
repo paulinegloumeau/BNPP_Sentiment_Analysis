@@ -31,8 +31,8 @@ def process(df):
         df.at[index, 'words_sentiment'] = tokens_sentiment
         
 for file in glob.glob("{}*.pkl".format(constants.TOKENIZED_DATA_PATH)):
-    df = pd.read_pickle(file)
+    df = pd.read_pickle(file).head(1)
     process(df)
-    print(df)
-    output_path = constants.PROCESSED_DATA_PATH + '_'.join((file.split('.')[-2]).split('/')[-1].split('_')[:-1]) + '_sa.pkl'
+    # You may want to change this if not on Windows OS
+    output_path = constants.PROCESSED_DATA_PATH + '_'.join((file.split('.')[-2]).split('\\')[-1].split('_')[:-1]) + '_sa.pkl'
     df.to_pickle(output_path)

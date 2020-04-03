@@ -10,3 +10,10 @@ Go to the root of the repo and run `python3 pipeline/run_sa.py`. For each file i
 - *tokens_sentiment* the sentiment between -1 and 1 of each token
 
 NB : the temporary files are saved with pickle format instead of csv format beacause of some problems we had while saving lists in a dataframe column 
+
+
+
+conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+
+
+ nano C:\Users\Arthur\Anaconda3\envs\py36\lib\site-packages\apex\reparameterization\weight_norm.py retirer fused weight norm

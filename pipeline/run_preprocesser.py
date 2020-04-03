@@ -36,7 +36,7 @@ def tokenize(df):
 
 def preprocess(df, light=False):
     print("Splitting to sentences and removing non alpha words ...")
-    df[["sentences", "sentences_words_index"]] = df.apply(
+    df[["sentences", "sentences_words_index", "delimiters_index"]] = df.apply(
         preprocesser.split_to_sentences, axis=1, result_type="expand"
     )
     print("Keeping only nouns ...")
@@ -59,7 +59,7 @@ def preprocess(df, light=False):
     df["joined_words"] = df.apply(preprocesser.rejoin_words, axis=1)
     if light:
         df = df[
-            ["review_id", "words_lemmatized", "words_lemmatized_index", "joined_words"]
+            ["review_id", "sentences_words_index", "words_lemmatized", "words_lemmatized_index", "joined_words", "delimiters_index"]
         ]
     return df
 
