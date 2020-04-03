@@ -7,10 +7,35 @@ import gensim
 import gensim.corpora as corpora
 from gensim.utils import simple_preprocess
 from gensim.models import CoherenceModel, TfidfModel
+from nltk.probability import FreqDist
 
 
 def concat_lists(lists):
     return sum(lists, [])
+
+
+def get_matrix(n, processed_df):
+    reviews_with_sentences = processed_df["words_lemmatized"]
+    reviews = processed_df["joined_words"]
+    all_words = processed_df["joined_words"].tolist()
+    all_words = [inner for outer in all_words for inner in outer]
+    fdist = FreqDist(all_words)
+    frequent_words = fdist.most_common(n)
+    A = np.zeros((n, n))
+    words = [word[0] for word in frequent_words]
+    frequencies = [word[1] for word in frequent_words]
+    for i, review in enumerate(reviews_with_sentences):
+        for sentence in review:
+            for w1 in sentence:
+                if w1 in words:
+                    index1 = words.index(w1)
+                    for w2 in sentence:
+                        if w2 in words:
+                            index2 = words.index(w2)
+                            A[index1, index2] += 1
+    for i in range(len(A)):
+        A[i][i] = 1
+    return (A, words)
 
 
 def data_preprocessing(df, no_below, no_above, split_sentences=False):
@@ -104,9 +129,8 @@ def louvain(critere, a, classes_finales={}):
         return louvain(critere, a, classes_finales)
 
 
-def classes_labels(classes_finales, n):
+def classes_labels(classes_finales, n, words):
     clusters = []
-    print("Il y a " + str(len(classes_finales)) + " clusters")
     for i, classe in enumerate(classes_finales):
         cluster = []
         for i in classe:
@@ -135,12 +159,7 @@ def critere3(i, j, a):
     return s
 
 
-def clustering(df, clusters):
-
-    df["clustered"] = df.apply(attribute_cluster, axis=1)
-
-
-def is_in_clusters(word):
+def is_in_clusters(word, clusters):
     res = False
     index = 0
     for i, classe in enumerate(clusters):
@@ -152,17 +171,19 @@ def is_in_clusters(word):
     return res, index
 
 
-def attribute_cluster(row):
-    sentences = row["words_lemmatized"]
+def process_aspect_detection(df, n):
+    A, words = get_matrix(n, df)
+    clusters = classes_labels(louvain(critere3, A), n, words)
+    sentences = df["words_lemmatized"]
     cs = []
     for sentence in sentences:
         c = []
         for word in sentence:
-
-            res, i = is_in_clusters(word)
+            res, i = is_in_clusters(word, clusters)
             if res:
                 c.append(i)
             else:
                 c.append("None")
         cs.append(c)
-    return c
+    df["clustered"] = cs
+    return clusters, df
