@@ -174,16 +174,28 @@ def is_in_clusters(word, clusters):
 def process_aspect_detection(df, n):
     A, words = get_matrix(n, df)
     clusters = classes_labels(louvain(critere3, A), n, words)
-    sentences = df["words_lemmatized"]
-    cs = []
-    for sentence in sentences:
-        c = []
-        for word in sentence:
-            res, i = is_in_clusters(word, clusters)
-            if res:
-                c.append(i)
-            else:
-                c.append("None")
-        cs.append(c)
-    df["clustered"] = cs
+    reviews = df["words_lemmatized"]
+
+    df["clustered"] = np.zeros
+    for j, review in enumerate(reviews):
+        cs = []
+        for sentence in review:
+            c = {}
+            for word in sentence:
+                res, i = is_in_clusters(word, clusters)
+                if res:
+                    if i not in c.keys():
+                        c[i] = 1
+                    else:
+                        c[i] += 1
+            cs.append(c)
+        df["clustered"].loc[j] = cs
+    count = 0
+    for review in df["clustered"]:
+        for sentence in review:
+            if sentence != {}:
+                count += 1
+                break
+    percentage = count / len(df["clustered"]) * 100
+    print("Il y a " + str(percentage) + " % de review attribuées à des clusters")
     return clusters, df

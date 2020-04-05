@@ -75,7 +75,9 @@ def make_document_heatmap(text, sentences_words_index, sentences_words_sentiment
 
 n_to_plot = 1
 
-df = pd.read_pickle(constants.PROCESSED_DATA_PATH + 'output.pkl')
+df = pd.read_pickle(constants.PROCESSED_DATA_PATH + 'input_example_output.pkl')
+df_clusters = pd.read_pickle(constants.PROCESSED_DATA_PATH + 'input_example_clusters.pkl')
+
 df_sample = df.sample(1)
 
 i = 0
