@@ -36,6 +36,7 @@ for file in glob.glob("{}*.pkl".format(constants.PREPROCESSED_DATA_PATH)):
         + (file.split("\\")[1]).split(".")[0]
         + "_ad_louvain.pkl"
     )
+
     df.to_pickle(output_path)
 
     df_clusters = pd.concat([pd.Series(x) for x in clusters], axis=1)
