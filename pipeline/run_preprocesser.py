@@ -13,6 +13,7 @@ create_file(constants.RAW_DATA_PATH)
 create_file(constants.PREPROCESSED_DATA_PATH)
 create_file(constants.TOKENIZED_DATA_PATH)
 create_file(constants.PROCESSED_DATA_PATH)
+create_file(constants.OUTPUT_DATA_PATH)
 
 #  Run the first preprocessing step, i.e. tokenizing and getting the index of the tokenized words
 
@@ -62,7 +63,6 @@ def preprocess(df, light=False):
             ["review_id", "sentences_words_index", "words_lemmatized", "words_lemmatized_index", "joined_words", "delimiters_index"]
         ]
     return df
-
 
 for file in glob.glob("{}*.csv".format(constants.RAW_DATA_PATH)):
     print("Test :        ", file)

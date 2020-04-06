@@ -65,5 +65,5 @@ for file in glob.glob("{}*_ad.pkl".format(constants.PROCESSED_DATA_PATH)):
     else:
         df = process(df_ad, df_sa)
         # You may want to change this if not on Windows OS
-        output_path = constants.PROCESSED_DATA_PATH + '_'.join((file.split('.')[-2]).split('\\')[-1].split('_')[:-1]) + '_output.pkl'
+        output_path = constants.OUTPUT_DATA_PATH + '_'.join((file.split('.')[-2]).split('\\')[-1].split('_')[:-1]) + '_output.pkl'
         df.to_pickle(output_path)
