@@ -42,6 +42,8 @@ Any input should be a csv with at least :
 
 ### Preprocessing
 
+Based on [NVIDIA's sentiment neuron](https://github.com/NVIDIA/sentiment-discovery).
+
 Run 
 
 ```
@@ -78,34 +80,22 @@ Run
 python pipelin/run_gathering.py
 ```
 
+### Data Visualization
 
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+Run 
+```
+python .\pipeline\visualize.py --heatmap --global-analysis
+```
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Pauline Gloumeau**
+* **Arthur Goutallier**
+* **Victor Le Fourn**
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](../LICENSE.md) file for details
 
 ## Acknowledgments
 
@@ -117,21 +107,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 
 
-The raw CSV file should be put in */data/raw*. This file should at least include the following columns :
-- *review_id* the id of the document
-- *text* the text of the document
-
-Go to the root of the repo and run `python3 pipeline/run_preprocesser.py`. For each file in */data/raw*, this will create a file in */data/tokenized* with 2 new columns :
-- *tokens* all the tokenized words found in the text
-- *tokens_index* the index of each token 
-
-Go to the root of the repo and run `python3 pipeline/run_sa.py`. For each file in */data/tokenized*, this will create a file in */data/processed* ending in *_sa* with 1 new column :
-- *tokens_sentiment* the sentiment between -1 and 1 of each token
-
-NB : the temporary files are saved with pickle format instead of csv format beacause of some problems we had while saving lists in a dataframe column 
-
-
-
-
-
- nano C:\Users\Arthur\Anaconda3\envs\py36\lib\site-packages\apex\reparameterization\weight_norm.py retirer fused weight norm
