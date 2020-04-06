@@ -12,6 +12,9 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.probability import FreqDist
 
 nltk.download("averaged_perceptron_tagger")
+nltk.download("stopwords")
+nltk.download("punkt")
+nltk.download("wordnet")
 
 from textblob import TextBlob
 
@@ -60,6 +63,8 @@ def split_to_sentences(row, many_delimiters=False):
 
     sentence = ""
     sentence_words_index = []
+
+    delimiters_index = []
     for i in range(len(words)):
         if words[i] not in delimiters:
             if words[i].isalpha():
@@ -74,7 +79,9 @@ def split_to_sentences(row, many_delimiters=False):
             sentence = ""
             sentence_words_index = []
 
-    return sentences, sentences_words_index
+            delimiters_index.append(words_index[i])
+
+    return sentences, sentences_words_index, delimiters_index
 
 
 def select_tagged(row):

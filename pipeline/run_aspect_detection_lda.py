@@ -22,7 +22,7 @@ for file in glob.glob("{}*.pkl".format(constants.PREPROCESSED_DATA_PATH)):
     df = pd.read_pickle(file)
     process(df)
     output_path = (
-        constants.PROCESSED_DATA_PATH + (file.split("\\")[1]).split(".")[0] + "_ad.pkl"
+        constants.PROCESSED_DATA_PATH + '_'.join((file.split("\\")[1]).split(".")[0].split('_')[:-1]) + "_ad.pkl"
     )
     print(df)
     df.to_pickle(output_path)

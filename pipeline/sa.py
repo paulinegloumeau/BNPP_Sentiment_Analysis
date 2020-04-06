@@ -1,10 +1,3 @@
-###############################################################################
-# Language Modeling on Penn Tree Bank
-#
-# This file generates new sentences sampled from the language model
-#
-###############################################################################
-
 import os
 import math
 
@@ -12,8 +5,6 @@ import argparse
 
 import torch
 from torch.autograd import Variable
-
-from apex.reparameterization import apply_weight_norm, remove_weight_norm
 
 import model
 
@@ -118,13 +109,8 @@ class Sentiment:
         with open(self.load_model, 'rb') as f:
             self.sd = torch.load(f)
 
-        try:
-            self.model_test.load_state_dict(self.sd)
-            print('Model loaded state dict')
-        except:
-            apply_weight_norm(self.model_test.rnn)
-            self.model_test.load_state_dict(sd)
-            remove_weight_norm(self.model_test)
+        self.model_test.load_state_dict(self.sd)
+        print('Model loaded state dict')
         
         # Get the neuron and polarity
         self.neuron, self.polarity = get_neuron_and_polarity(self.sd, self.neuron)
